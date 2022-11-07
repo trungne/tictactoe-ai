@@ -13,6 +13,7 @@ import {
   hasNoTilesLeft,
 } from "../src/utils";
 import styles from "../styles/Home.module.css";
+import cx from "classnames";
 
 const Home: NextPage = () => {
   const [board, setBoard] = useState<Board>(createBoard());
@@ -33,14 +34,13 @@ const Home: NextPage = () => {
         maxValue = getMaxValue;
       }
     });
+
     bestPossibleActions = bestPossibleActions.filter(
       ({ score }) => score === maxValue
     );
-    console.log(bestPossibleActions);
 
     if (bestPossibleActions.length > 0) {
       const randomIdx = Math.floor(Math.random() * bestPossibleActions.length);
-      console.log(randomIdx)
       const bestBoard = getResult(
         currentBoard,
         bestPossibleActions[randomIdx].action,
@@ -84,29 +84,72 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-h-screen flex flex-col justify-center items-center">
-        <div className="relative grid grid-rows-3 bg-red-50">
-          <h1 className="absolute mx-auto left-0 top-[-60px] text-6xl mb-10">
-            {hasNoTilesLeft(board) && "Tied"}
-            {winner && `Winner: ${winner}`}
-          </h1>
+      <main className="min-h-[100vh] max-w-3xl m-auto flex flex-col justify-center ">
+        <div className="min-h-[20vh] flex justify-center items-center">
+          {(hasNoTilesLeft(board) || winner) && (
+            <>
+              <h1 className="prose text-honeydew text-4xl md:text-6xl text-center p-8">
+                {hasNoTilesLeft(board) && "Tied"}
 
+                {winner && (
+                  <>
+                    Winner:{" "}
+                    <span
+                      className={`${
+                        winner === "O" ? "text-crayola" : "text-saffron"
+                      }`}
+                    >
+                      {winner}
+                    </span>
+                  </>
+                )}
+              </h1>
+              <button
+                className="prose hover:bg-slate-400 text-honeydew text-4xl md:text-6xl text-center p-8"
+                onClick={() => {
+                  setBoard(createBoard());
+                  setWinner(null);
+                }}
+              >
+                Play again
+              </button>
+            </>
+          )}
+        </div>
+
+        <div className="w-[80%] m-auto grid grid-rows-3 bg-honeydew">
           {board.map((row, idxRow) => {
             return (
-              <div key={`row${idxRow}`} className="grid grid-cols-3 ">
-                {row.map((_column, idxColumn) => {
+              <div key={`row${idxRow}`} className="grid grid-cols-3">
+                {row.map((_, idxColumn) => {
                   return (
                     <button
+                      disabled={
+                        hasNoTilesLeft(board) ||
+                        !!winner ||
+                        !!board[idxRow][idxColumn]
+                      }
                       onClick={() => {
                         play({
                           row: idxRow,
                           column: idxColumn,
                         });
                       }}
-                      className="
-                      border-solid border border-black hover:bg-slate-300 
-                      text-black text-6xl
-                      w-40 h-40 flex justify-center items-center"
+                      className={cx(
+                        `w-full aspect-square 
+                        border-solid border border-black 
+                        hover:bg-slate-300 
+                        text-black text-3xl md:text-6xl lg:text-8xl 
+                        flex justify-center items-center`,
+                        board[idxRow][idxColumn] === "O"
+                          ? "text-crayola"
+                          : "text-saffron",
+                        hasNoTilesLeft(board) ||
+                          !!winner ||
+                          !!board[idxRow][idxColumn]
+                          ? "disabled:pointer-events-none"
+                          : ""
+                      )}
                       key={`row${idxRow}column${idxColumn}`}
                     >
                       {board[idxRow][idxColumn]}
@@ -118,19 +161,6 @@ const Home: NextPage = () => {
           })}
         </div>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   );
 };

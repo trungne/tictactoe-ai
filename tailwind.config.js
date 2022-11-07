@@ -6,7 +6,15 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        honeydew: "#D9E5D6",
+        crayola: "#00A7E1",
+        champagne: "#EDDEA4",
+        tangerine: "#F7A072",
+        saffron: "#FF9B42"
+      }
+    },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography'), require("daisyui")],
 }
