@@ -139,7 +139,7 @@ const Home: NextPage = () => {
                         `w-full aspect-square 
                         border-solid border border-black 
                         hover:bg-slate-300 
-                        text-black text-3xl md:text-6xl lg:text-8xl 
+                        text-3xl md:text-6xl lg:text-8xl 
                         flex justify-center items-center`,
                         board[idxRow][idxColumn] === "O"
                           ? "text-crayola"
